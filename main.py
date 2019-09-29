@@ -13,7 +13,7 @@ from connectors import AwairConnector, InfluxConnector, AwairException
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 
-def main(config):
+def main():
     """Accepts configuration and connects to services"""
 
     # Run until we get a KeyboardInterrupt
@@ -21,11 +21,11 @@ def main(config):
         logging.info("Checking for new data from Awair")
 
         # Setup a GraphQL client to connect to Awair
-        awairClient = GraphQLClient(config["awair"]["endpoint"])
-        awairClient.inject_token("Bearer " + config["awair"]["token"])
+        awairClient = GraphQLClient(os.getenv('AWAIR_ENDPOINT'))
+        awairClient.inject_token("Bearer " + os.getenv('AWAIR_TOKEN'))
 
         # Setup an InfluxDB client
-        influxClient = InfluxDBClient(**config["influx"])
+        influxClient = InfluxDBClient(host=os.getenv('INFLUXDB_HOST'), port=os.getenv('INFLUXDB_PORT'), username=os.getenv('INFLUXDB_USERNAME'), password=os.getenv('INFLUXDB_PASSWORD'), database=os.getenv('INFLUXDB_DATABASE'))
 
         # Setup our Awair and Influx connectors and inject the clients
         awairConnector = AwairConnector(awairClient)
@@ -57,20 +57,6 @@ def main(config):
         time.sleep(wait_for_seconds)
 
 
-# Load and parse the configuration
-try:
+# Load main
+main()
 
-    with open("config.yaml") as configFile:
-        config = yaml.load(configFile)
-
-        if ("influx" not in config or "awair" not in config):
-            logging.error("Invalid config.yaml file, please use config.example.yaml as a guide")
-        else:
-            main(config)
-
-except FileNotFoundError as e:
-    logging.error("Please add a config.yaml file")
-except AwairException as e:
-    logging.error("Awair server returned unexpected results", e)
-except KeyboardInterrupt as e:
-    logging.warn("Stopping...")

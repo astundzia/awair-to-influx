@@ -1,7 +1,0 @@
-awair:
-  endpoint: https://developer-apis.awair.is/graphql
-  token:
-
-influx:
-  host: localhost
-  database: air_quality
