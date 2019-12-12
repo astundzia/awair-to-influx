@@ -4,6 +4,9 @@ in a tool like Chronograf.
 
 <img src="docs/chronograf.png" alt="Example of data in Chronograf" width="450" />
 
+## Why fork?
+I forked and modified this repo so I could run this application within a docker container. I modified a few things to make it more "12 factor friendly" where configuration is done through environment variables.
+
 ## Setup
 
 Just clone the repository, copy `config.example.yaml` to `config.yaml` and fill
